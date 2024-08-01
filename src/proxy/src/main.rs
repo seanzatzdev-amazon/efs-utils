@@ -10,6 +10,7 @@ use tokio::io::AsyncWriteExt;
 use tokio::signal;
 use tokio::sync::Mutex;
 use tokio_util::sync::CancellationToken;
+use jemallocator::Jemalloc;
 
 mod config_parser;
 mod connections;
