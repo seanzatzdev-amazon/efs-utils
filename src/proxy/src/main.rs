@@ -33,6 +33,9 @@ mod efs_prot {
     include!(concat!(env!("OUT_DIR"), "/efs_prot_xdr.rs"));
 }
 
+#[global_allocator]
+static GLOBAL: Jemalloc = Jemalloc;
+
 #[tokio::main]
 async fn main() {
     let args = Args::parse();
