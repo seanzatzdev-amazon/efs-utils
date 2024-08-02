@@ -250,7 +250,7 @@ impl<S: ProxyStream> ProxyTask<S> {
         _shutdown_sender: mpsc::Sender<u8>,
     ) {
         trace!("Starting proxy reader");
-        let mut buffer = BytesMut::with_capacity(BUFFER_SIZE*10);
+        let mut buffer = BytesMut::with_capacity(BUFFER_SIZE);
         let reason;
         let mut next_conn = 0;
 
@@ -298,7 +298,7 @@ impl<S: ProxyStream> ProxyTask<S> {
             }
 
             if buffer.capacity() == 0 {
-                buffer.reserve(BUFFER_SIZE*10)
+                buffer.reserve(BUFFER_SIZE)
             }
         }
         trace!("cli_to_server exiting!");
