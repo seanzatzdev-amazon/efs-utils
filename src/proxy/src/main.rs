@@ -3,6 +3,7 @@ use crate::connections::{PlainTextPartitionFinder, TlsPartitionFinder};
 use crate::tls::TlsConfig;
 use clap::Parser;
 use controller::Controller;
+use libc::{c_char, c_void};
 use log::{debug, error, info};
 use std::path::Path;
 use std::sync::Arc;
