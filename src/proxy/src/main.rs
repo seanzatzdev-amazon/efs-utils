@@ -12,6 +12,7 @@ use tokio::signal;
 use tokio::sync::Mutex;
 use tokio_util::sync::CancellationToken;
 use jemallocator::Jemalloc;
+use std::ffi::CStr;
 
 mod config_parser;
 mod connections;
