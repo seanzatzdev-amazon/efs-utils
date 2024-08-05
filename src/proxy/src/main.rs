@@ -56,55 +56,55 @@ pub static malloc_conf: Option<&'static libc::c_char> = Some(unsafe {
     .y
 });
 
-// We define our own function because letting jemalloc print directly makes a mess, especially in
-// in unit testing
-unsafe extern "C" fn stats_to_string(buf: *mut c_void, stats_str: *const c_char) {
-    let s = CStr::from_ptr(stats_str)
-        .to_str()
-        .unwrap_or("Could not parse stats");
-    let buf = &mut *(buf as *mut String);
-    buf.push_str(s);
-}
+// // We define our own function because letting jemalloc print directly makes a mess, especially in
+// // in unit testing
+// unsafe extern "C" fn stats_to_string(buf: *mut c_void, stats_str: *const c_char) {
+//     let s = CStr::from_ptr(stats_str)
+//         .to_str()
+//         .unwrap_or("Could not parse stats");
+//     let buf = &mut *(buf as *mut String);
+//     buf.push_str(s);
+// }
 
-// Doc mentions that we should avoid allocations in the callback
-// I've seen in some cases that this can be *really large* (especially on Graviton)
-// Decrease this value if we decide to print less
-const JEMALLOC_STATS_BUF_LEN: usize = 2 * 1024 * 1024;
+// // Doc mentions that we should avoid allocations in the callback
+// // I've seen in some cases that this can be *really large* (especially on Graviton)
+// // Decrease this value if we decide to print less
+// const JEMALLOC_STATS_BUF_LEN: usize = 2 * 1024 * 1024;
 
-pub fn jemalloc_stats(opts: &[c_char]) -> String {
-    let mut buf = String::with_capacity(JEMALLOC_STATS_BUF_LEN);
-    let buf_ref = (&mut buf) as *mut _ as *mut c_void;
-    unsafe {
-        jemalloc_sys::malloc_stats_print(Some(stats_to_string), buf_ref, opts.as_ptr());
-    }
-    buf
-}
+// pub fn jemalloc_stats(opts: &[c_char]) -> String {
+//     let mut buf = String::with_capacity(JEMALLOC_STATS_BUF_LEN);
+//     let buf_ref = (&mut buf) as *mut _ as *mut c_void;
+//     unsafe {
+//         jemalloc_sys::malloc_stats_print(Some(stats_to_string), buf_ref, opts.as_ptr());
+//     }
+//     buf
+// }
 
-#[allow(clippy::unnecessary_cast)]
-pub fn jemalloc_get_config() -> String {
-    // c_char is not defined the same on aarch64 (u8) than on al2/al2012/mac (i8)
-    // so on aarch64 the explicit casting is useless. Since it does not hurt, I prefer to keep it
-    let opts = [
-        b'm' as c_char,
-        b'a' as c_char,
-        b'b' as c_char,
-        b'l' as c_char,
-        b'x' as c_char,
-        0,
-    ];
-    jemalloc_stats(&opts)
-}
+// #[allow(clippy::unnecessary_cast)]
+// pub fn jemalloc_get_config() -> String {
+//     // c_char is not defined the same on aarch64 (u8) than on al2/al2012/mac (i8)
+//     // so on aarch64 the explicit casting is useless. Since it does not hurt, I prefer to keep it
+//     let opts = [
+//         b'm' as c_char,
+//         b'a' as c_char,
+//         b'b' as c_char,
+//         b'l' as c_char,
+//         b'x' as c_char,
+//         0,
+//     ];
+//     jemalloc_stats(&opts)
+// }
 
-pub fn jemalloc_get_stats() -> String {
-    let opts = [0];
-    jemalloc_stats(&opts)
-}
+// pub fn jemalloc_get_stats() -> String {
+//     let opts = [0];
+//     jemalloc_stats(&opts)
+// }
 
 
 #[tokio::main]
 async fn main() {
     let args = Args::parse();
-    jemalloc_get_stats();
+    // jemalloc_get_stats();
 
     let proxy_config = match ProxyConfig::from_path(Path::new(&args.proxy_config_path)) {
         Ok(config) => config,
