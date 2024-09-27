@@ -3,7 +3,7 @@ use crate::connections::{PlainTextPartitionFinder, TlsPartitionFinder};
 use crate::tls::TlsConfig;
 use clap::Parser;
 use controller::Controller;
-use libc::{c_char, c_void};
+// use libc::{c_char, c_void};
 use log::{debug, error, info};
 use std::path::Path;
 use std::sync::Arc;
@@ -12,7 +12,7 @@ use tokio::signal;
 use tokio::sync::Mutex;
 use tokio_util::sync::CancellationToken;
 use jemallocator::Jemalloc;
-use std::ffi::CStr;
+// use std::ffi::CStr;
 
 mod config_parser;
 mod connections;
@@ -39,22 +39,22 @@ mod efs_prot {
 #[global_allocator]
 static GLOBAL: Jemalloc = Jemalloc;
 
-// NB: idea stolen from S3BlobAssemblerRust which is subsequently stolen from:
-// https://github.com/gnzlbg/jemallocator/blob/master/jemalloc-sys/tests/malloc_conf_set.rs#L14
-// This is unsafe but acceptable since issues would be caught at the beginning of the program
-union U {
-    x: &'static u8,
-    y: &'static libc::c_char,
-}
+// // NB: idea stolen from S3BlobAssemblerRust which is subsequently stolen from:
+// // https://github.com/gnzlbg/jemallocator/blob/master/jemalloc-sys/tests/malloc_conf_set.rs#L14
+// // This is unsafe but acceptable since issues would be caught at the beginning of the program
+// union U {
+//     x: &'static u8,
+//     y: &'static libc::c_char,
+// }
 
-#[allow(non_upper_case_globals)]
-#[export_name = "_rjem_malloc_conf"]
-pub static malloc_conf: Option<&'static libc::c_char> = Some(unsafe {
-    U {
-        x: &b"dirty_decay_ms:0\0"[0],
-    }
-    .y
-});
+// #[allow(non_upper_case_globals)]
+// #[export_name = "_rjem_malloc_conf"]
+// pub static malloc_conf: Option<&'static libc::c_char> = Some(unsafe {
+//     U {
+//         x: &b"dirty_decay_ms:0\0"[0],
+//     }
+//     .y
+// });
 
 // // We define our own function because letting jemalloc print directly makes a mess, especially in
 // // in unit testing
